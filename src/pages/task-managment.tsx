@@ -19,12 +19,14 @@ export default function TaskManagement() {
   const [tasks, setTasks] = useState<Task[]>([])
 
   // Agregar la lista de usuarios al componente
-  const users = [
+  const users1 = [
     { value: "alice", label: "Alice Johnson" },
     { value: "bob", label: "Bob Smith" },
     { value: "carol", label: "Carol Williams" },
     { value: "dave", label: "Dave Brown" },
   ]
+
+  const [users, setusers] = useState(users1);
 
   // Modificar la función addTask para manejar el nuevo formato de assignedTo
   const addTask = (description: string, assignedTo: string) => {

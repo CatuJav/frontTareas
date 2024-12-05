@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { UserSelect } from "./user-select"
+import { DatoSelect } from "./dato-select"
+import MultipleSelector from "./ui/multiple-selector"
 
 type CreateTaskFormProps = {
   onAddTask: (description: string, assignedTo: string) => void
@@ -13,6 +14,7 @@ type CreateTaskFormProps = {
 export function CreateTaskForm({ onAddTask, users }: CreateTaskFormProps) {
   const [description, setDescription] = useState("")
   const [assignedTo, setAssignedTo] = useState("")
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,9 +26,19 @@ export function CreateTaskForm({ onAddTask, users }: CreateTaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label htmlFor="description">Descripción de la tarea</Label>
+    <form onSubmit={handleSubmit} className="space-y-4 containers px-0">
+      <div className="text-left">
+        <Label htmlFor="description" className="text-lg">Título</Label>
+        <Input
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Ingrese título de la tarea"
+          required
+        />
+      </div>
+      <div className="text-left">
+        <Label htmlFor="description"  className="text-lg">Descripción de la tarea</Label>
         <Textarea
           id="description"
           value={description}
@@ -35,10 +47,30 @@ export function CreateTaskForm({ onAddTask, users }: CreateTaskFormProps) {
           required
         />
       </div>
-      <div>
-        <Label htmlFor="assignedTo">Asignar a</Label>
-        <UserSelect onSelect={setAssignedTo} users={users} />
+      <div className="text-left">
+      <Label htmlFor="picture"  className="text-lg">Archivo</Label>
+      <Input id="picture" type="file" />
       </div>
+      <div className="text-left">
+        <Label htmlFor="assignedTo"  className="text-lg">Estado</Label>
+        <DatoSelect onSelect={setAssignedTo} datos={users} />
+      </div>
+
+      <div className="text-left" >
+        <Label htmlFor="assignedTo"  className="text-lg">Asignar a</Label> 
+     
+      <MultipleSelector
+        defaultOptions={users}
+        placeholder="Select frameworks you like..."
+        emptyIndicator={
+          <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+            No encontrado.
+          </p>
+        }
+        onChange={(selected) => console.log(selected)}
+      />
+
+    </div>
       <Button type="submit">Crear Tarea</Button>
     </form>
   )
