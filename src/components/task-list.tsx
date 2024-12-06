@@ -8,6 +8,7 @@ import {
   } from "@/components/ui/table"
   import { Button } from "@/components/ui/button"
   import { Badge } from "@/components/ui/badge"
+import { useState } from "react"
   
   type Task = {
     id: number
@@ -25,6 +26,47 @@ import {
   }
   
   export function TaskList({ tasks, onUpdateStatus }: TaskListProps) {
+
+    const [Tareas, setTareas] = useState<Task[]>([
+      {
+        id: 1,
+        description: "Tarea 1",
+        assignedTo: {
+          value: "alice",
+          label: "Alice Johnson",
+        },
+        status: "pendiente",
+      },
+      {
+        id: 2,
+        description: "Tarea 2",
+        assignedTo: {
+          value: "bob",
+          label: "Bob Smith",
+        },
+        status: "pendiente",
+      },
+      {
+        id: 3,
+        description: "Tarea 3",
+        assignedTo: {
+          value: "carol",
+          label: "Carol Williams",
+        },
+        status: "pendiente",
+      },
+      {
+        id: 4,
+        description: "Tarea 4",
+        assignedTo: {
+          value: "dave",
+          label: "Dave Brown",
+        },
+        status: "pendiente",
+      },
+    ]);
+    
+
     const getStatusColor = (status: Task["status"]) => {
       switch (status) {
         case "pendiente":
