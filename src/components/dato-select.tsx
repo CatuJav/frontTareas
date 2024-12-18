@@ -12,33 +12,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { EstadoMS } from "@/interfaces/tareasInterfaces"
 
-type Dato = {
-  value: string
-  label: string
-}
+
 
 type DatoSelectProps = {
   onSelect: (value: string) => void
-  datos: Dato[]
+  datos: EstadoMS[]
 }
 
 export function DatoSelect({ onSelect, datos }: DatoSelectProps) {
 
+  console.log(datos)
+  
 
   return (
     <Select>
     <SelectTrigger className="w-[180px]">
-      <SelectValue placeholder="Select a fruit" />
+      <SelectValue placeholder="Seleccione..." />
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
-        <SelectLabel>Fruits</SelectLabel>
-        <SelectItem value="apple">Apple</SelectItem>
-        <SelectItem value="banana">Banana</SelectItem>
-        <SelectItem value="blueberry">Blueberry</SelectItem>
-        <SelectItem value="grapes">Grapes</SelectItem>
-        <SelectItem value="pineapple">Pineapple</SelectItem>
+        <SelectLabel>Seleccione</SelectLabel>
+        {datos.map((dato: EstadoMS) => (
+           <SelectItem key={dato.id} value={dato.id.toString()}>
+              {dato.estado}
+            </SelectItem>
+          ))  
+        }
+       
       </SelectGroup>
     </SelectContent>
   </Select>
