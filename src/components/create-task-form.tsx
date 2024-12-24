@@ -8,22 +8,39 @@ import MultipleSelector from "./ui/multiple-selector"
 import apiDB from "@/api/apiDB"
 import { EstadoMS, UsuarioMS } from "@/interfaces/tareasInterfaces"
 import { Spinner } from "./ui/spinner"
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
 
 
 
-type CreateTaskFormProps = {
-  onAddTask: (description: string, assignedTo: string) => void
-  users: { value: string; label: string }[]
-}
 
-export function CreateTaskForm({ onAddTask, users }: CreateTaskFormProps) {
-  const [description, setDescription] = useState("")
+
+export function CreateTaskForm() {
+  const [titulo, setTitulo] = useState("")
+  const [descripccion, setDescripccion] = useState("")
   const [assignedTo, setAssignedTo] = useState("")
 
   const [listaEstados, setListaEstados] = useState<EstadoMS[]>([]);
   const [listaUsuarios, setListaUsuarios] = useState<UsuarioMS[]>([]);
   const [us, setUs] = useState< { value: string; label: string }[]>([]);
-    
+  
+
+  type Inputs = {
+    titulo: string
+    descripcion: string,
+    archivo?: string,
+    estado: string,
+    asignadoA: string
+  }
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    formState: { errors },
+  } = useForm<Inputs>()
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
 
   useEffect(() => {
     loadEstado();
@@ -46,62 +63,84 @@ export function CreateTaskForm({ onAddTask, users }: CreateTaskFormProps) {
   };
 
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (description && assignedTo) {
-      onAddTask(description, assignedTo)
-      setDescription("")
-      setAssignedTo("")
-    }
-  }
 
-  console.log(us,'us');
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 containers px-0">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 containers px-0">
       <div className="text-left">
         <Label htmlFor="description" className="text-lg">Título</Label>
         <Input
           id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
           placeholder="Ingrese título de la tarea"
-          required
+          {...register("titulo", { required: true })}
         />
       </div>
       <div className="text-left">
         <Label htmlFor="description"  className="text-lg">Descripción de la tarea</Label>
         <Textarea
           id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          {...register("descripcion", { required: true })}
+          
           placeholder="Ingrese la descripción de la tarea"
-          required
+          
         />
       </div>
       <div className="text-left">
-      <Label htmlFor="picture"  className="text-lg">Archivo</Label>
-      <Input id="picture" type="file" />
+      <Label htmlFor="archivo"  className="text-lg">Archivo</Label>
+      
+      <Controller
+        name="archivo"
+        control={control}
+        defaultValue=""
+        render={({ field }) => (
+          <Input
+            id="archivo"
+            type="file"
+            {...field}
+          />
+        )}
+      />
+    
       </div>
       <div className="text-left">
         <Label htmlFor="assignedTo"  className="text-lg">Estado</Label>
-        <DatoSelect onSelect={setAssignedTo} datos={listaEstados} />
+        <Controller
+        name="estado"
+        control={control}
+        defaultValue=""
+        render={({ field }) => (
+          <DatoSelect
+            value={field.value}
+            onChange={field.onChange}
+            datos={listaEstados}
+          />
+        )}
+      />
       </div>
 
       <div className="text-left" >
         <Label htmlFor="assignedTo"  className="text-lg">Asignar a</Label> 
      
      { us.length > 0 ?
-      <MultipleSelector
-        defaultOptions={us}
-        placeholder="Selecccione los usuarios..."
-        emptyIndicator={
-          <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-            No encontrado.
-          </p>
-        }
-        onChange={(selected) => console.log(selected)}
-      />: <Spinner size={"small"} />}
+            <Controller
+            name="asignadoA"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <MultipleSelector
+              defaultOptions={us}
+              placeholder="Selecccione los usuarios..."
+              emptyIndicator={
+                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                  No encontrado.
+                </p>
+              }
+              onChange={field.onChange}
+            />
+      
+            )}
+          />
+      : <Spinner size={"small"} />}
     
 
     </div>
