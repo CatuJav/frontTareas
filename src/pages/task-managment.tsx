@@ -59,10 +59,10 @@ export default function TaskManagement() {
           <TabsTrigger value="manage">Gestionar Tareas</TabsTrigger>
         </TabsList>
         <TabsContent value="create">
-          <CreateTaskForm onAddTask={addTask} users={users}/>
+          <CreateTaskForm />
         </TabsContent>
         <TabsContent value="manage">
-          <TaskList tasks={tasks} onUpdateStatus={updateTaskStatus} />
+          <TaskList  />
         </TabsContent>
       </Tabs>
     </div>

@@ -10,6 +10,7 @@ import {
   import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
 import apiDB from "@/api/apiDB"
+import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TareaResumenMS } from "@/interfaces/tareasInterfaces"
   
 
   type Task = {
@@ -21,67 +22,56 @@ import apiDB from "@/api/apiDB"
     }
     status: "pendiente" | "en progreso" | "completada"
   }
-  
-  type TaskListProps = {
-    tasks: Task[]
-    onUpdateStatus: (taskId: number, newStatus: Task["status"]) => void
-  }
-  
-  export function TaskList({ tasks, onUpdateStatus }: TaskListProps) {
-
    
+  export function TaskList() {
 
+    const [Tareas, setTareas] = useState<TareaResumenMS[]>([]);
+
+    useEffect(() => {
+      loadEstado();
+    }, [])
+
+    const loadEstado = async () => {
+      const estados = await apiDB.get<TareaResumenMS[]>("/Tarea")
+      setTareas(estados.data)
+      console.log(estados.data);
+      }
+    
+    
+      const iniciarTarea = async (idTarea: number) => {
+        const tarea = await apiDB.get<TareaMS>(`/Tarea/${idTarea}`)
+        const estado = await apiDB.get<EstadoTareaMS[]>(`/EstadoTarea`)
+        if (tarea) {
+          const nuevaTarea:TareaME = { ...tarea.data, idEstado: estado.data.find((e) => e.estado === NombreEstado.Progreso)!.id, idUsuarios: [] }
+          const response = await apiDB.put(`/Tarea`, nuevaTarea)
+          if (response.status === 200) {
+            loadEstado()
+        }
+      }}
 
     
 
-    const [Tareas, setTareas] = useState<Task[]>([
-      {
-        id: 1,
-        description: "Tarea 1",
-        assignedTo: {
-          value: "alice",
-          label: "Alice Johnson",
-        },
-        status: "pendiente",
-      },
-      {
-        id: 2,
-        description: "Tarea 2",
-        assignedTo: {
-          value: "bob",
-          label: "Bob Smith",
-        },
-        status: "pendiente",
-      },
-      {
-        id: 3,
-        description: "Tarea 3",
-        assignedTo: {
-          value: "carol",
-          label: "Carol Williams",
-        },
-        status: "pendiente",
-      },
-      {
-        id: 4,
-        description: "Tarea 4",
-        assignedTo: {
-          value: "dave",
-          label: "Dave Brown",
-        },
-        status: "pendiente",
-      },
-    ]);
-    
-
-    const getStatusColor = (status: Task["status"]) => {
+    const getStatusColor = (status: TareaResumenMS["nombreEstado"]) => {
       switch (status) {
-        case "pendiente":
-          return "bg-yellow-500"
-        case "en progreso":
-          return "bg-blue-500"
-        case "completada":
+        case NombreEstado.Nuevo:
           return "bg-green-500"
+        case NombreEstado.Progreso:
+          return "bg-blue-500"
+        case NombreEstado.Fin:
+          return "bg-gray-500"
+        default:
+          return "bg-gray-500"
+      }
+    }
+
+    const getBotonColor = (status: TareaResumenMS["nombreEstado"]) => {
+      switch (status) {
+        case NombreEstado.Nuevo:
+          return "bg-green-900"
+        case NombreEstado.Progreso:
+          return "bg-indigo-700"
+        case NombreEstado.Fin:
+          return "bg-purple-600"
         default:
           return "bg-gray-500"
       }
@@ -91,33 +81,37 @@ import apiDB from "@/api/apiDB"
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
+            <TableHead className="w-[100px]">ID</TableHead>
+            <TableHead>Titulo</TableHead>
             <TableHead>Descripción</TableHead>
             <TableHead>Asignado a</TableHead>
             <TableHead>Estado</TableHead>
+            <TableHead>Progreso</TableHead>
             <TableHead>Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tasks.map((task) => (
-            <TableRow key={task.id}>
-              <TableCell>{task.id}</TableCell>
-              <TableCell>{task.description}</TableCell>
-              <TableCell>{task.assignedTo.label}</TableCell>
+          {Tareas.map((task) => (
+            <TableRow key={task.idTarea}>
+              <TableCell>{task.idTarea}</TableCell>
+              <TableCell>{task.titulo}</TableCell>
+              <TableCell>{task.descripcion}</TableCell>
+              <TableCell> {task.fecha ? new Date(task.fecha).toDateString() : "N/A"}</TableCell>
               <TableCell>
-                <Badge className={getStatusColor(task.status)}>{task.status}</Badge>
+                <Badge className={getStatusColor(task.nombreEstado)}>{task.nombreEstado}</Badge>
               </TableCell>
+              <TableCell>{task.progreso}%</TableCell>
               <TableCell>
-                {task.status !== "completada" && (
-                  <Button
-                    onClick={() =>
-                      onUpdateStatus(
-                        task.id,
-                        task.status === "pendiente" ? "en progreso" : "completada"
-                      )
+                {task.nombreEstado != NombreEstado.Fin && (
+                  <Button className={getBotonColor(task.nombreEstado)}
+                    onClick={() =>{
+                     if(task.nombreEstado === NombreEstado.Nuevo){
+                        iniciarTarea(task.idTarea)
+                      }
+                    }
                     }
                   >
-                    {task.status === "pendiente" ? "Iniciar" : "Completar"}
+                    {task.nombreEstado === NombreEstado.Nuevo ? "Iniciar" : "Progreso"}
                   </Button>
                 )}
               </TableCell>

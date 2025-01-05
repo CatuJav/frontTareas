@@ -18,18 +18,23 @@ export function CreateTaskForm() {
   const [titulo, setTitulo] = useState("")
   const [descripccion, setDescripccion] = useState("")
   const [assignedTo, setAssignedTo] = useState("")
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
   const [listaEstados, setListaEstados] = useState<EstadoMS[]>([]);
   const [listaUsuarios, setListaUsuarios] = useState<UsuarioMS[]>([]);
   const [us, setUs] = useState< { value: string; label: string }[]>([]);
   
 
+  type asignadoA = {
+    value: string;
+    label: string;
+  }
   type Inputs = {
     titulo: string
     descripcion: string,
-    archivo?: string,
+    archivo?: FileList,
     estado: string,
-    asignadoA: string
+    asignadoA: Array<asignadoA>
   }
 
   const {
@@ -37,10 +42,62 @@ export function CreateTaskForm() {
     handleSubmit,
     watch,
     control,
+    reset,
     formState: { errors },
   } = useForm<Inputs>()
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const formData = new FormData();
+
+    //crear tarea
+    const tarea = {
+      titulo: data.titulo,
+      descripcion: data.descripcion,
+      idEstado: parseInt(data.estado),
+      idUsuarios: data.asignadoA.map((e) => parseInt(e.value)),
+      fecha: new Date().toISOString(),
+      //set tiemzone Guayaquil to ISOString
+
+      hora : new Date().toLocaleString('sv', {timeZone: 'America/Guayaquil'}).replace(' ','T'),
+    }
+
+    console.log(tarea);
+
+
+      const response = await apiDB.post('/Tarea', tarea);
+      
+      if (response.status === 200) {
+        console.log(response.data);
+        setUploadMessage("Tarea creada correctamente.");
+        if(data.archivo?.length==0){
+          reset();
+        }
+      } else {
+        console.log("Error al crear la tarea.");
+      }
+    
+
+    if(data.archivo && data.archivo?.length!=0){
+    formData.append('pdfFile', data.archivo[0]);
+    formData.append('idTarea', response.data);
+    
+    try {
+      const response = await apiDB.post('/Tarea/subir', formData);
+      
+      if (response.status === 200) {
+        setUploadMessage("Archivo subido correctamente.");
+        console.log(response.data);
+        reset();
+      } else {
+        setUploadMessage("Error al subir el archivo.");
+      }
+    }catch (error) {
+      console.error('Error de red:', error);
+      setUploadMessage("Error de red al subir el archivo.");
+      }
+  
+    }
+  }
 
   useEffect(() => {
     loadEstado();
@@ -66,6 +123,7 @@ export function CreateTaskForm() {
 
 
   return (
+    <>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 containers px-0">
       <div className="text-left">
         <Label htmlFor="description" className="text-lg">Título</Label>
@@ -74,6 +132,7 @@ export function CreateTaskForm() {
           placeholder="Ingrese título de la tarea"
           {...register("titulo", { required: true })}
         />
+        {errors.titulo && <p style={{ color: "red" }}>{errors.titulo.message}</p>}
       </div>
       <div className="text-left">
         <Label htmlFor="description"  className="text-lg">Descripción de la tarea</Label>
@@ -84,22 +143,13 @@ export function CreateTaskForm() {
           placeholder="Ingrese la descripción de la tarea"
           
         />
+        {errors.descripcion && <p style={{ color: "red" }}>{errors.descripcion.message}</p>}
       </div>
       <div className="text-left">
       <Label htmlFor="archivo"  className="text-lg">Archivo</Label>
       
-      <Controller
-        name="archivo"
-        control={control}
-        defaultValue=""
-        render={({ field }) => (
-          <Input
-            id="archivo"
-            type="file"
-            {...field}
-          />
-        )}
-      />
+      <Input type="file" accept=".pdf" {...register("archivo")} />
+      {errors.archivo && <p style={{ color: "red" }}>{errors.archivo.message}</p>}
     
       </div>
       <div className="text-left">
@@ -125,7 +175,7 @@ export function CreateTaskForm() {
             <Controller
             name="asignadoA"
             control={control}
-            defaultValue=""
+            defaultValue={[]}
             render={({ field }) => (
               <MultipleSelector
               defaultOptions={us}
@@ -146,6 +196,8 @@ export function CreateTaskForm() {
     </div>
       <Button type="submit">Crear Tarea</Button>
     </form>
+     {uploadMessage && <p>{uploadMessage}</p>}
+    </>
   )
 }
 
