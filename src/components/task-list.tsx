@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from "react"
 import apiDB from "@/api/apiDB"
 import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TareaResumenMS } from "@/interfaces/tareasInterfaces"
+import { DialogoEditar } from "./editar"
   
 
   type Task = {
@@ -76,6 +77,17 @@ import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TareaResumenMS } from "@
           return "bg-gray-500"
       }
     }
+
+    const guardarAvance = async (idTarea: number, avance: number) => {
+      const tarea = await apiDB.get<TareaMS>(`/Tarea/${idTarea}`)
+      if (tarea) {
+        const nuevaTarea = { ...tarea.data, progreso: avance }
+        const response = await apiDB.put(`/Tarea`, nuevaTarea)
+        if (response.status === 200) {
+          loadEstado()
+        }
+      }
+    }
   
     return (
       <Table>
@@ -103,6 +115,8 @@ import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TareaResumenMS } from "@
               <TableCell>{task.progreso}%</TableCell>
               <TableCell>
                 {task.nombreEstado != NombreEstado.Fin && (
+                  <div>
+                     {task.nombreEstado === NombreEstado.Nuevo ?(
                   <Button className={getBotonColor(task.nombreEstado)}
                     onClick={() =>{
                      if(task.nombreEstado === NombreEstado.Nuevo){
@@ -111,8 +125,14 @@ import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TareaResumenMS } from "@
                     }
                     }
                   >
-                    {task.nombreEstado === NombreEstado.Nuevo ? "Iniciar" : "Progreso"}
-                  </Button>
+                    Iniciar
+                  </Button>):
+                  <DialogoEditar color={getBotonColor(task.nombreEstado)}
+                   titulo={task.titulo}
+                   descripcion={task.descripcion}
+                    onGuardar={() => guardarAvance(task.idTarea, 50)}
+                  />}
+                  </div>
                 )}
               </TableCell>
             </TableRow>
