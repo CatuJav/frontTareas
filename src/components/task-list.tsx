@@ -90,10 +90,11 @@ import { DialogoEditar } from "./editar"
     }
   
     return (
+      <div className="w-full container mx-auto p-5">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">ID</TableHead>
+            <TableHead className="w-full">ID</TableHead>
             <TableHead>Titulo</TableHead>
             <TableHead>Descripción</TableHead>
             <TableHead>Asignado a</TableHead>
@@ -128,9 +129,9 @@ import { DialogoEditar } from "./editar"
                     Iniciar
                   </Button>):
                   <DialogoEditar color={getBotonColor(task.nombreEstado)}
-                   titulo={task.titulo}
-                   descripcion={task.descripcion}
-                    onGuardar={() => guardarAvance(task.idTarea, 50)}
+                    tarea={task}
+                   
+                    
                   />}
                   </div>
                 )}
@@ -139,6 +140,7 @@ import { DialogoEditar } from "./editar"
           ))}
         </TableBody>
       </Table>
+      </div>
     )
   }
   

@@ -123,8 +123,8 @@ export function CreateTaskForm() {
 
 
   return (
-    <>
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 containers px-0">
+    <div className="w-full container mx-auto p-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 containers px-5">
       <div className="text-left">
         <Label htmlFor="description" className="text-lg">Título</Label>
         <Input
@@ -197,7 +197,7 @@ export function CreateTaskForm() {
       <Button type="submit">Crear Tarea</Button>
     </form>
      {uploadMessage && <p>{uploadMessage}</p>}
-    </>
+    </div>
   )
 }
 

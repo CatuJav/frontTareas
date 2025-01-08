@@ -16,6 +16,7 @@ export interface TareaMS {
     fecha:       Date;
     hora:        Date;
     idEstado:    number;
+    progreso:    number;
 }
 
 export interface TareaME {
@@ -53,6 +54,23 @@ export enum Tipo {
 export interface EstadoTareaMS {
     id:     number;
     estado: NombreEstado;
+}
+
+export interface ComentarioMS {
+    id:          number;
+    comentario:  string;
+    idUsuario:   number;
+    usuarioAD:   string;
+    idTarea:     number;
+    titulo:      string;
+    descripcion: string;
+    fecha:       Date;
+}
+
+export interface ComentarioME {
+    comentario: string;
+    idUsuario:  number;
+    idTarea:    number;
 }
 
 
