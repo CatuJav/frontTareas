@@ -10,6 +10,7 @@ import { EstadoMS, UsuarioMS } from "@/interfaces/tareasInterfaces"
 import { Spinner } from "./ui/spinner"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import Layout from "./layout-sidebar"
+import { Navigate } from "react-router-dom";
 
 
 
@@ -24,7 +25,15 @@ export function CreateTaskForm() {
   const [listaEstados, setListaEstados] = useState<EstadoMS[]>([]);
   const [listaUsuarios, setListaUsuarios] = useState<UsuarioMS[]>([]);
   const [us, setUs] = useState< { value: string; label: string }[]>([]);
+  const [authenticated, setauthenticated] = useState("false");
   
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("authenticated");
+    if (loggedInUser) {
+      setauthenticated(loggedInUser);
+    }
+  }, []);
+
 
   type asignadoA = {
     value: string;
@@ -121,7 +130,9 @@ export function CreateTaskForm() {
   };
 
 
-
+  if (authenticated=="false") {
+    return <Navigate replace to="/login" />;
+  } else {
 
   return (
     <Layout>
@@ -202,5 +213,6 @@ export function CreateTaskForm() {
     </div>
     </Layout>
   )
+  }
 }
 

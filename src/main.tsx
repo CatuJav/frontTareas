@@ -9,7 +9,8 @@ createRoot(document.getElementById('root')!).render(
 
       <BrowserRouter>
      <Routes>
-     <Route path='/' element={<LoginPage />} />
+     <Route path='/' element={<LoginPage />} /> 
+     <Route path='/login' element={<LoginPage />} />
       <Route path='/crear' element={<CreateTaskForm />} />
       <Route path='/listar' element={<TaskList  />} />
     </Routes>

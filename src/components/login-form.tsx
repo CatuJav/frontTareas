@@ -9,11 +9,27 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useState } from "react"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+
+    const [username, setusername] = useState("");
+    const [password, setpassword] = useState("");
+    const [authenticated, setauthenticated] = useState(localStorage.getItem(localStorage.getItem("authenticated")|| "false"));
+    const users = [{ username: "test@example.com", password: "testpassword" }];
+    const handleSubmit = (e:any) => {
+      e.preventDefault()
+      const account = users.find((user) => user.username === username);
+      if (account && account.password === password) {
+          setauthenticated("true")
+          localStorage.setItem("authenticated", "true");
+      }
+    };
+
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -33,6 +49,8 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  value={username}
+                  onChange={(e) => setusername(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
@@ -45,7 +63,7 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" required  onChange={(e) => setpassword(e.target.value)}/>
               </div>
               <Button type="submit" className="w-full">
                 Login
