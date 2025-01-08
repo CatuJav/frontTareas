@@ -12,6 +12,7 @@ import { useEffect, useState } from "react"
 import apiDB from "@/api/apiDB"
 import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TareaResumenMS } from "@/interfaces/tareasInterfaces"
 import { DialogoEditar } from "./editar"
+import Layout from "./layout-sidebar"
   
 
   type Task = {
@@ -90,6 +91,7 @@ import { DialogoEditar } from "./editar"
     }
   
     return (
+      <Layout>
       <div className="w-full container mx-auto p-5">
       <Table>
         <TableHeader>
@@ -141,6 +143,7 @@ import { DialogoEditar } from "./editar"
         </TableBody>
       </Table>
       </div>
+      </Layout>
     )
   }
   

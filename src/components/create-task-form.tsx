@@ -9,6 +9,7 @@ import apiDB from "@/api/apiDB"
 import { EstadoMS, UsuarioMS } from "@/interfaces/tareasInterfaces"
 import { Spinner } from "./ui/spinner"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
+import Layout from "./layout-sidebar"
 
 
 
@@ -123,6 +124,7 @@ export function CreateTaskForm() {
 
 
   return (
+    <Layout>
     <div className="w-full container mx-auto p-4">
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 containers px-5">
       <div className="text-left">
@@ -198,6 +200,7 @@ export function CreateTaskForm() {
     </form>
      {uploadMessage && <p>{uploadMessage}</p>}
     </div>
+    </Layout>
   )
 }
 
