@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
+import { useForm, SubmitHandler } from "react-hook-form"
 
 export function LoginForm({
   className,
@@ -20,14 +21,33 @@ export function LoginForm({
     const [password, setpassword] = useState("");
     const [authenticated, setauthenticated] = useState(localStorage.getItem(localStorage.getItem("authenticated")|| "false"));
     const users = [{ username: "test@example.com", password: "testpassword" }];
-    const handleSubmit = (e:any) => {
-      e.preventDefault()
-      const account = users.find((user) => user.username === username);
-      if (account && account.password === password) {
-          setauthenticated("true")
-          localStorage.setItem("authenticated", "true");
+
+
+    type Inputs = {
+        usuario: string
+        contrasenia: string
+    }
+      const {
+        register,
+        handleSubmit,
+        watch,
+        control,
+        reset,
+        formState: { errors },
+      } = useForm<Inputs>()
+    
+      const onSubmit: SubmitHandler<Inputs> = async (data) => {
+
+        const account = users.find((user) => user.username === username);
+        if (account && account.password === password) {
+            setauthenticated("true")
+            localStorage.setItem("authenticated", "true");
+        }else
+        {
+            alert("Usuario o contraseña incorrectos")
+        }
       }
-    };
+
 
 
   return (
@@ -40,7 +60,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -48,10 +68,9 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
-                  value={username}
-                  onChange={(e) => setusername(e.target.value)}
+                  {...register("usuario", { required: true })}
                 />
+                 {errors.usuario && <p style={{ color: "red" }}>{errors.usuario.message}</p>}
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
@@ -63,7 +82,10 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required  onChange={(e) => setpassword(e.target.value)}/>
+                <Input id="password" type="password"
+                {...register("contrasenia", { required: true })}
+                />
+                {errors.contrasenia && <p style={{ color: "red" }}>{errors.contrasenia.message}</p>}
               </div>
               <Button type="submit" className="w-full">
                 Login

@@ -26,14 +26,6 @@ export function CreateTaskForm() {
   const [listaUsuarios, setListaUsuarios] = useState<UsuarioMS[]>([]);
   const [us, setUs] = useState< { value: string; label: string }[]>([]);
   const [authenticated, setauthenticated] = useState("false");
-  
-  useEffect(() => {
-    const loggedInUser = localStorage.getItem("authenticated");
-    if (loggedInUser) {
-      setauthenticated(loggedInUser);
-    }
-  }, []);
-
 
   type asignadoA = {
     value: string;
@@ -111,6 +103,10 @@ export function CreateTaskForm() {
 
   useEffect(() => {
     loadEstado();
+    const loggedInUser = localStorage.getItem("authenticated");
+    if (loggedInUser) {
+      setauthenticated(loggedInUser);
+    }
   }, []);
   
   useEffect(() => {
@@ -136,6 +132,7 @@ export function CreateTaskForm() {
 
   return (
     <Layout>
+      <>
     <div className="w-full container mx-auto p-4">
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 containers px-5">
       <div className="text-left">
@@ -211,6 +208,7 @@ export function CreateTaskForm() {
     </form>
      {uploadMessage && <p>{uploadMessage}</p>}
     </div>
+    </>
     </Layout>
   )
   }
