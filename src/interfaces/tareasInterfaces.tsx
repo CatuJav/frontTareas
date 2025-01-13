@@ -26,6 +26,7 @@ export interface TareaME {
     fecha:       Date;
     hora:        Date;
     idEstado:    number;
+    propgreso:   number;
     idUsuarios:  number[];
 }
 export interface TareaResumenMS {

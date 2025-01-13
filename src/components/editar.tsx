@@ -23,8 +23,9 @@ import {
   import { Label } from "@/components/ui/label"
 import { Button } from './ui/button'
 import apiDB from '@/api/apiDB'
-import { ComentarioME, ComentarioMS, TareaResumenMS } from '@/interfaces/tareasInterfaces'
+import { ComentarioME, ComentarioMS, TareaMS, TareaResumenMS, UsuarioMS } from '@/interfaces/tareasInterfaces'
 import { set } from 'react-hook-form'
+import { useAuth } from '@/hooks/useAuth'
 
 
 interface DialogoEditarProps {
@@ -33,30 +34,44 @@ interface DialogoEditarProps {
 
     }
 export const DialogoEditar = (props:DialogoEditarProps) => {
+  const { user } = useAuth();
 
   const [comentarios, setComentarios] = useState<ComentarioMS[]>([])
+  const [usuarioEdita, setUsuarioEdita] = useState<UsuarioMS>()
   const [ingresoComentario, setIngresoComentario] = React.useState("");
   const [ingresoAvance, setIngresoAvance] = React.useState(props.tarea.progreso);
   const onChangeComentario = ({ target }:any) => setIngresoComentario(target.value)
   const onChangeAvance = ({ target }:any) => setIngresoAvance(target.value)
+  
 
 
   useEffect(() => {
     loadInformacion()
   }, [])
 
+  useEffect(() => {
+    loadInformacion();
+  }, [props.tarea.progreso]);
+
   const loadInformacion = async ()  =>{ 
     
     const resp = await apiDB.get<ComentarioMS[]>(`Comentario/comentarioTarea?idTarea=${props.tarea.idTarea}`)
+    const respProgreso = await apiDB.get<TareaMS>(`Tarea/${props.tarea.idTarea}`)
+    const respUsuarioNombre = await apiDB.get<UsuarioMS>(`Usuario/nombre/${user?.samAccountName}`)
+    setUsuarioEdita(respUsuarioNombre.data)
     setComentarios(resp.data);
+    setIngresoAvance(respProgreso.data.progreso)
+
   }
 
   const guardar = async () => {
    const comentario:ComentarioME = {
-    idUsuario: 7,
+    idUsuario: usuarioEdita!.id,
     comentario: ingresoComentario, 
     idTarea: props.tarea.idTarea}
     const resp = await apiDB.post<string>(`/Comentario`, comentario)
+
+    actualizarProgreso();
 
     if (resp.status === 200) {
       loadInformacion()
@@ -65,6 +80,14 @@ export const DialogoEditar = (props:DialogoEditarProps) => {
     }
    console.log(ingresoComentario)
     console.log(ingresoAvance)
+  }
+
+  const actualizarProgreso = async () => {
+    const resp = await apiDB.put<string>(`Tarea/progreso`,{idTarea: props.tarea.idTarea, progreso: ingresoAvance})
+    if (resp.status === 200) {
+      loadInformacion()
+      setIngresoAvance(0)
+    }
   }
 
   return (
@@ -103,8 +126,8 @@ export const DialogoEditar = (props:DialogoEditarProps) => {
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Fecha</TableHead>
-          <TableHead>Usuario</TableHead>
           <TableHead>Comentario</TableHead>
+          <TableHead>Usuario</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

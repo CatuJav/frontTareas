@@ -11,21 +11,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
+import { useAuth } from "@/hooks/useAuth"
+import apiDB from "@/api/apiDB"
+import { RespAD } from "@/interfaces/adinterface"
+import { AlertCircle } from "lucide-react"
+ 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
 
-    const [username, setusername] = useState("");
-    const [password, setpassword] = useState("");
-    const [authenticated, setauthenticated] = useState(localStorage.getItem(localStorage.getItem("authenticated")|| "false"));
-    const users = [{ username: "test@example.com", password: "testpassword" }];
+
+    const { login } = useAuth();
+
 
 
     type Inputs = {
         usuario: string
-        contrasenia: string
+        contrasena: string
     }
       const {
         register,
@@ -37,16 +46,30 @@ export function LoginForm({
       } = useForm<Inputs>()
     
       const onSubmit: SubmitHandler<Inputs> = async (data) => {
-
-        const account = users.find((user) => user.username === username);
-        if (account && account.password === password) {
-            setauthenticated("true")
-            localStorage.setItem("authenticated", "true");
-        }else
+        
+       try{
+        
+       
+        const loginData = await apiDB.post<RespAD>("/Login", data)
+ 
+        if (loginData.data.status === 200) {
+          // Replace with actual authentication logic
+          await login(loginData.data);
+        } else 
+        if (loginData.data.status == 401)
         {
-            alert("Usuario o contraseña incorrectos")
+          alert("Usuario o contraseña incorrectos");
+          
+          
+        }else{
+          alert("Error en el servidor");
         }
+      }catch(e){
+        console.log(e);
       }
+      }
+
+    
 
 
 
@@ -54,9 +77,9 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Tareas</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Ingrese su usuario y contraseña del Active Directory
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -66,40 +89,25 @@ export function LoginForm({
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  type="text"
+                  placeholder="usuario"
                   {...register("usuario", { required: true })}
                 />
                  {errors.usuario && <p style={{ color: "red" }}>{errors.usuario.message}</p>}
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id="password" type="password"
-                {...register("contrasenia", { required: true })}
+               
+                <Input id="password" type="password" placeholder="contraseña"
+                {...register("contrasena", { required: true })}
                 />
-                {errors.contrasenia && <p style={{ color: "red" }}>{errors.contrasenia.message}</p>}
+                {errors.contrasena && <p style={{ color: "red" }}>{errors.contrasena.message}</p>}
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit"  className="w-full">
                 Login
               </Button>
-              <Button variant="outline" className="w-full">
-                Login with Google
-              </Button>
+              
             </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
-                Sign up
-              </a>
-            </div>
+          
           </form>
         </CardContent>
       </Card>

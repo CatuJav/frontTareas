@@ -11,6 +11,7 @@ import { Spinner } from "./ui/spinner"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import Layout from "./layout-sidebar"
 import { Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth"
 
 
 
@@ -87,7 +88,7 @@ export function CreateTaskForm() {
       const response = await apiDB.post('/Tarea/subir', formData);
       
       if (response.status === 200) {
-        setUploadMessage("Archivo subido correctamente.");
+        setUploadMessage("Tarea creada correctamente.");
         console.log(response.data);
         reset();
       } else {
@@ -126,9 +127,9 @@ export function CreateTaskForm() {
   };
 
 
-  if (authenticated=="false") {
+  /*if (authenticated=="false") {
     return <Navigate replace to="/login" />;
-  } else {
+  } else {*/
 
   return (
     <Layout>
@@ -158,7 +159,7 @@ export function CreateTaskForm() {
       <div className="text-left">
       <Label htmlFor="archivo"  className="text-lg">Archivo</Label>
       
-      <Input type="file" accept=".pdf" {...register("archivo")} />
+      <Input type="file" accept=".pdf" {...register("archivo",{required:true})} />
       {errors.archivo && <p style={{ color: "red" }}>{errors.archivo.message}</p>}
     
       </div>
@@ -212,5 +213,5 @@ export function CreateTaskForm() {
     </Layout>
   )
   }
-}
+//}
 

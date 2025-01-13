@@ -1,18 +1,28 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-
-import TaskManagement from './pages/task-managment'
-import { AppSidebar } from './components/app-sidebar'
-import Layout from './components/layout-sidebar'
+import { ProtectedRoute } from './components/ProtectedRoute.tsx';
+import { CreateTaskForm } from './components/create-task-form.tsx';
+import { TaskList } from './components/task-list.tsx';
+import { LoginPage } from './pages/login.tsx';
+import { Routes, Route } from "react-router";
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-   
-    </>
+    <Routes>
+    <Route path='/' element={<LoginPage />} />
+    <Route path='/login' element={<LoginPage />} />
+    <Route path='/crear' element={
+      <ProtectedRoute>
+      <CreateTaskForm />
+    </ProtectedRoute>
+      } />
+    <Route path='/listar' element={
+      <ProtectedRoute>
+      <TaskList />
+    </ProtectedRoute>
+    } />
+  </Routes>
   )
 }
 
