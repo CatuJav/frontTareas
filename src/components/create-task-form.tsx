@@ -9,6 +9,9 @@ import apiDB from "@/api/apiDB"
 import { EstadoMS, UsuarioMS } from "@/interfaces/tareasInterfaces"
 import { Spinner } from "./ui/spinner"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
+import Layout from "./layout-sidebar"
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth"
 
 
 
@@ -23,7 +26,7 @@ export function CreateTaskForm() {
   const [listaEstados, setListaEstados] = useState<EstadoMS[]>([]);
   const [listaUsuarios, setListaUsuarios] = useState<UsuarioMS[]>([]);
   const [us, setUs] = useState< { value: string; label: string }[]>([]);
-  
+  const [authenticated, setauthenticated] = useState("false");
 
   type asignadoA = {
     value: string;
@@ -85,7 +88,7 @@ export function CreateTaskForm() {
       const response = await apiDB.post('/Tarea/subir', formData);
       
       if (response.status === 200) {
-        setUploadMessage("Archivo subido correctamente.");
+        setUploadMessage("Tarea creada correctamente.");
         console.log(response.data);
         reset();
       } else {
@@ -101,6 +104,10 @@ export function CreateTaskForm() {
 
   useEffect(() => {
     loadEstado();
+    const loggedInUser = localStorage.getItem("authenticated");
+    if (loggedInUser) {
+      setauthenticated(loggedInUser);
+    }
   }, []);
   
   useEffect(() => {
@@ -120,9 +127,13 @@ export function CreateTaskForm() {
   };
 
 
-
+  /*if (authenticated=="false") {
+    return <Navigate replace to="/login" />;
+  } else {*/
 
   return (
+    <Layout>
+      <>
     <div className="w-full container mx-auto p-4">
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 containers px-5">
       <div className="text-left">
@@ -148,7 +159,7 @@ export function CreateTaskForm() {
       <div className="text-left">
       <Label htmlFor="archivo"  className="text-lg">Archivo</Label>
       
-      <Input type="file" accept=".pdf" {...register("archivo")} />
+      <Input type="file" accept=".pdf" {...register("archivo",{required:true})} />
       {errors.archivo && <p style={{ color: "red" }}>{errors.archivo.message}</p>}
     
       </div>
@@ -198,6 +209,9 @@ export function CreateTaskForm() {
     </form>
      {uploadMessage && <p>{uploadMessage}</p>}
     </div>
+    </>
+    </Layout>
   )
-}
+  }
+//}
 

@@ -6,43 +6,53 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "./ui/button";
+import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 
 // Menu items.
 const items = [
   {
-    title: "Home",
+    title: "Crear Tarea",
     url: "crear",
     icon: ClipboardCheck,
   },
   {
-    title: "Inbox",
+    title: "Listar",
     url: "listar",
     icon: List,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
+  }
 ]
 
 export function AppSidebar() {
+  const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <Sidebar>
+      <SidebarHeader>
+      <SidebarMenuButton    size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+      <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarFallback className="bg-slate-600 text-white p-2 rounded-lg">
+                  {user!.givenName.charAt(0) + user!.surname.charAt(0)}
+                </AvatarFallback>
+        </Avatar>
+      <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">{user!.displayName}</span>
+                <span className="truncate text-xs">{user!.emailAddress}</span>
+              </div>
+      </SidebarMenuButton>
+      <Button onClick={handleLogout}>Logout</Button>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
