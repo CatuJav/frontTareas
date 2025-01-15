@@ -57,7 +57,7 @@ export const DialogoEditar = (props:DialogoEditarProps) => {
     
     const resp = await apiDB.get<ComentarioMS[]>(`Comentario/comentarioTarea?idTarea=${props.tarea.idTarea}`)
     const respProgreso = await apiDB.get<TareaMS>(`Tarea/${props.tarea.idTarea}`)
-    const respUsuarioNombre = await apiDB.get<UsuarioMS>(`Usuario/nombre/${user?.samAccountName}`)
+    const respUsuarioNombre = await apiDB.get<UsuarioMS>(`Usuario/nombre/${user?.principal.samAccountName}`)
     setUsuarioEdita(respUsuarioNombre.data)
     setComentarios(resp.data);
     setIngresoAvance(respProgreso.data.progreso)

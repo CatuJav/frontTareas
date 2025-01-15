@@ -13,6 +13,7 @@ import apiDB from "@/api/apiDB"
 import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TareaResumenMS } from "@/interfaces/tareasInterfaces"
 import { DialogoEditar } from "./editar"
 import Layout from "./layout-sidebar"
+import { DialogoAprobar } from "./aprobar"
   
 
   type Task = {
@@ -144,16 +145,11 @@ import Layout from "./layout-sidebar"
                    
                     
                   />
-                     <Button className="bg-sky-700"
-                    onClick={() =>{
-                     if(task.nombreEstado === NombreEstado.Nuevo){
-                        iniciarTarea(task.idTarea)
-                      }
-                    }
-                    }
-                  >
-                    Aprobar
-                  </Button>
+                     <DialogoAprobar color="bg-sky-700"
+                
+                  
+                    
+                  />
                   </div>
                   
                   }

@@ -52,11 +52,11 @@ export function LoginForm({
        
         const loginData = await apiDB.post<RespAD>("/Login", data)
  
-        if (loginData.data.status === 200) {
+        if (loginData.data.principal.status === 200) {
           // Replace with actual authentication logic
           await login(loginData.data);
         } else 
-        if (loginData.data.status == 401)
+        if (loginData.data.principal.status == 401)
         {
           alert("Usuario o contraseña incorrectos");
           

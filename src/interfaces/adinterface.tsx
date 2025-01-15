@@ -1,4 +1,9 @@
 export interface RespAD {
+    principal:  Principal;
+    miembrosDe: string[];
+}
+
+export interface Principal {
     status:                            number;
     givenName:                         string;
     middleName:                        null;

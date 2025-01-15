@@ -43,12 +43,12 @@ export function AppSidebar() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
       <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarFallback className="bg-slate-600 text-white p-2 rounded-lg">
-                  {user!.givenName.charAt(0) + user!.surname.charAt(0)}
+                  {user!.principal.givenName.charAt(0) + user!.principal.surname.charAt(0)}
                 </AvatarFallback>
         </Avatar>
       <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user!.displayName}</span>
-                <span className="truncate text-xs">{user!.emailAddress}</span>
+                <span className="truncate font-semibold">{user?.principal!.displayName}</span>
+                <span className="truncate text-xs">{user!.principal.emailAddress}</span>
               </div>
       </SidebarMenuButton>
       <Button onClick={handleLogout}>Logout</Button>
