@@ -80,15 +80,36 @@ import { DialogoAprobar } from "./aprobar"
       }
     }
 
-    const guardarAvance = async (idTarea: number, avance: number) => {
-      const tarea = await apiDB.get<TareaMS>(`/Tarea/${idTarea}`)
+    const descargarArchivo = async (idTarea: number) => {
+      try{
+      const tarea = await apiDB.get(`/Tarea/archivo/${idTarea}`,{
+        responseType: 'blob',
+      })
       if (tarea) {
-        const nuevaTarea = { ...tarea.data, progreso: avance }
-        const response = await apiDB.put(`/Tarea`, nuevaTarea)
-        if (response.status === 200) {
-          loadEstado()
-        }
+        
+        const blob = new Blob([tarea.data], { type: "application/pdf" });
+
+        // Crear una URL para el blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Crear un enlace para descargar el archivo
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "documento.pdf"; // Nombre del archivo al descargar
+        document.body.appendChild(link);
+
+        // Hacer clic en el enlace para iniciar la descarga
+        link.click();
+
+        // Limpiar el DOM
+        link.remove();
+        window.URL.revokeObjectURL(url);
       }
+    } catch (error) {
+        console.error("Error al descargar el archivo:", error);
+        alert("Hubo un problema al descargar el archivo.");
+    }
+      
     }
   
     return (
@@ -113,7 +134,7 @@ import { DialogoAprobar } from "./aprobar"
               <TableCell>{task.idTarea}</TableCell>
               <TableCell>{task.titulo}</TableCell>
               <TableCell>{task.descripcion}</TableCell>
-              <TableCell className="text-blue-600"><a href="#" >{"archivo" + Math.floor(Math.random() * 100) + ".pdf"
+              <TableCell className="text-blue-600"><a href="#" onClick={() => descargarArchivo(task.idTarea)} >{task.nombreArchivo
 
                 }</a></TableCell>
               <TableCell> {task.fecha ? new Date(task.fecha).toDateString() : "N/A"}</TableCell>
@@ -146,7 +167,7 @@ import { DialogoAprobar } from "./aprobar"
                     
                   />
                      <DialogoAprobar color="bg-sky-700"
-                
+                    idTarea={task.idTarea}
                   
                     
                   />

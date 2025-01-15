@@ -64,7 +64,6 @@ export function CreateTaskForm() {
       hora : new Date().toLocaleString('sv', {timeZone: 'America/Guayaquil'}).replace(' ','T'),
     }
 
-    console.log(tarea);
 
 
       const response = await apiDB.post('/Tarea', tarea);
