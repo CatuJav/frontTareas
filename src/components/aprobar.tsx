@@ -74,13 +74,13 @@ return (
       </DialogHeader>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 containers px-5">
       <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
+        <div className="">
           <Label htmlFor="archivo" className="text-right">
             Archivo
           </Label>
           <Input type="file"  accept=".pfx" {...register("archivo",{required:true})}  />
         </div>
-        <div className="grid grid-cols-4 items-center gap-4">
+        <div className="">
           <Label htmlFor="clave" className="text-right">
             Clave
           </Label>
@@ -93,7 +93,7 @@ return (
       </div>
       <DialogFooter>
       <DialogClose asChild>
-        <Button type="submit">Save changes</Button>
+        <Button type="submit">Firmar</Button>
         </DialogClose>
       </DialogFooter>
       </form>
