@@ -16,15 +16,7 @@ import Layout from "./layout-sidebar"
 import { DialogoAprobar } from "./aprobar"
   
 
-  type Task = {
-    id: number
-    description: string
-    assignedTo: {
-      value: string
-      label: string
-    }
-    status: "pendiente" | "en progreso" | "completada"
-  }
+
    
   export function TaskList() {
 
@@ -165,12 +157,17 @@ import { DialogoAprobar } from "./aprobar"
                     tarea={task}
                    
                     
-                  />
-                     <DialogoAprobar color="bg-sky-700"
-                    idTarea={task.idTarea}
+                  />{
+                    (task.nombreArchivo != null && !task.nombreArchivo.startsWith("signed_")) &&(
+                      <DialogoAprobar color="bg-sky-700"
+                      idTarea={task.idTarea}/>
+                    )
+
+                  }
+                    
                   
                     
-                  />
+                  
                   </div>
                   
                   }

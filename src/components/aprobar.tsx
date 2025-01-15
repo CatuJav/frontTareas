@@ -12,7 +12,8 @@ import {
   } from "@/components/ui/dialog"
   import { Input } from "@/components/ui/input"
   import { Label } from "@/components/ui/label"
-import { useForm,SubmitHandler  } from 'react-hook-form'
+import { useForm,SubmitHandler, set  } from 'react-hook-form'
+import { LoaderCircle }from "lucide-react"
 import apiDB from '@/api/apiDB'
 
 interface DialogoAprobarProps {
@@ -24,6 +25,7 @@ export const DialogoAprobar = (props:DialogoAprobarProps) => {
 
     const [archivo, setArchivo] = React.useState("");
     const [firma, setFirma] = React.useState("");
+    const [isLoading , setLoading] = React.useState(false);
     const onChangeArchivo = ({ target }:any) => setArchivo(target.value)
     const onChangeFirma = ({ target }:any) => setFirma(target.value)
 
@@ -43,7 +45,7 @@ export const DialogoAprobar = (props:DialogoAprobarProps) => {
       } = useForm<Inputs>();
       
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-      console.log("first")
+      setLoading(true);
       const formData = new FormData();
       formData.append('pfxFile', data.archivo[0]);
       //formData.append('clave', data.contasena);
@@ -51,10 +53,14 @@ export const DialogoAprobar = (props:DialogoAprobarProps) => {
       console.log(pathFirma);
       const archivoFirmado = await apiDB.post('/Tarea/firmarPDF', {rutaFirma: pathFirma.data, contrasenaFirma: data.contasena, idArchivo: props.idTarea});
 
-      console.log(archivoFirmado);
+      setLoading(false);
+      window.location.reload();
     }
-
-  return (
+return (
+    isLoading ?  ( <LoaderCircle className="h-6 w-6 animate-spin" /> ):
+   (
+    
+    
     <Dialog>
     <DialogTrigger asChild>
       <Button variant="outline" className={props.color}>Aprobar</Button>
@@ -93,5 +99,6 @@ export const DialogoAprobar = (props:DialogoAprobarProps) => {
       </form>
     </DialogContent>
   </Dialog>
-  )
+)
+)    
 }

@@ -78,6 +78,8 @@ export const DialogoEditar = (props:DialogoEditarProps) => {
       setIngresoComentario("")
  
     }
+
+    window.location.reload();
    console.log(ingresoComentario)
     console.log(ingresoAvance)
   }
