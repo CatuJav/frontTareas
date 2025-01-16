@@ -55,7 +55,10 @@ export function LoginForm({
         if (loginData.data.principal.status === 200) {
           // Replace with actual authentication logic
           await login(loginData.data);
-        } else 
+        } else if(loginData.data.principal.status === 201){
+          alert("Usuario sin certificado");
+          await login(loginData.data);
+        }else
         if (loginData.data.principal.status == 401)
         {
           alert("Usuario o contraseña incorrectos");
