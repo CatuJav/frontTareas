@@ -29,24 +29,43 @@ export interface TareaME {
     propgreso:   number;
     idUsuarios:  number[];
 }
+
+
 export interface TareaResumenMS {
-    idTarea:       number;
-    titulo:        string;
-    descripcion:   string;
-    fecha:         Date;
-    hora:          Date;
-    idEstado:      number;
-    nombreEstado:  NombreEstado;
-    nombreArchivo: null | string;
-    tipo:          Tipo | null;
-    progreso:      number;
+    idTarea:           number;
+    titulo:            string;
+    descripcion:       string;
+    fecha:             Date;
+    hora:              Date;
+    idEstado:          number;
+    nombreEstado:      NombreEstado;
+    nombreArchivo:     null | string;
+    tipo:              Tipo | string;
+    progreso:          number;
+    usuariosAsignados: UsuariosAsignado[] | null;
 }
 
 export enum NombreEstado {
-    Fin = "FINALIZADO",
     Progreso = "EN PROGRESO",
+    Fin = "FINALIZADO",
     Nuevo = "NUEVO",
 }
+
+export interface UsuariosAsignado {
+    id:             number;
+    usuarioAD:      UsuarioAD;
+    idRol:          number;
+    idDepartamento: number;
+    idTarea:        number;
+}
+
+export enum UsuarioAD {
+    Darwinuc = "darwinuc",
+    Test = "test",
+}
+
+
+
 
 export enum Tipo {
     ApplicationPDF = "application/pdf",
@@ -73,6 +92,11 @@ export interface ComentarioME {
     idUsuario:  number;
     idTarea:    number;
 }
+export interface TareaUsuarioMS {
+    idTarea:   number;
+    idUsuario: number;
+}
+
 
 
 

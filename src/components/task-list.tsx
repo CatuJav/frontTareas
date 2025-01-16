@@ -103,6 +103,7 @@ import { DialogoAprobar } from "./aprobar"
     }
       
     }
+    
   
     return (
       <Layout>
@@ -110,11 +111,12 @@ import { DialogoAprobar } from "./aprobar"
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-full">ID</TableHead>
+            <TableHead >ID</TableHead>
             <TableHead>Titulo</TableHead>
             <TableHead>Descripción</TableHead>
             <TableHead>Archivo</TableHead>
             <TableHead>Asignado a</TableHead>
+            <TableHead>Fecha</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead>Progreso</TableHead>
             <TableHead>Acciones</TableHead>
@@ -129,6 +131,9 @@ import { DialogoAprobar } from "./aprobar"
               <TableCell className="text-blue-600"><a href="#" onClick={() => descargarArchivo(task.idTarea)} >{task.nombreArchivo
 
                 }</a></TableCell>
+                <TableCell>{
+                  task.usuariosAsignados?.map((u) => u.usuarioAD).join(", ") || "N/A"                  
+                  }</TableCell>
               <TableCell> {task.fecha ? new Date(task.fecha).toDateString() : "N/A"}</TableCell>
               <TableCell>
                 <Badge  className={getStatusColor(task.nombreEstado)}>{task.nombreEstado}</Badge>
