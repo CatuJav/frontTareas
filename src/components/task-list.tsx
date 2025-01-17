@@ -79,7 +79,7 @@ import { DialogoAprobar } from "./aprobar"
       })
       if (tarea) {
         
-        const blob = new Blob([tarea.data], { type: "application/pdf" });
+        const blob = new Blob([tarea.data], { type: tarea.data.type });
 
         // Crear una URL para el blob
         const url = window.URL.createObjectURL(blob);
@@ -87,7 +87,7 @@ import { DialogoAprobar } from "./aprobar"
         // Crear un enlace para descargar el archivo
         const link = document.createElement("a");
         link.href = url;
-        link.download = "documento.pdf"; // Nombre del archivo al descargar
+        link.download = "documento." + tarea.data.type.split("/")[1];
         document.body.appendChild(link);
 
         // Hacer clic en el enlace para iniciar la descarga
@@ -165,7 +165,7 @@ import { DialogoAprobar } from "./aprobar"
                   />{
                     (task.nombreArchivo != null && !task.nombreArchivo.startsWith("signed_")) &&(
                       <DialogoAprobar color="bg-sky-700"
-                      idTarea={task.idTarea}/>
+                      idTarea={task.idTarea} tipo={task.tipo} nombreArchivo={task.nombreArchivo}/>
                     )
 
                   }

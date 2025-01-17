@@ -15,10 +15,13 @@ import {
 import { useForm,SubmitHandler, set  } from 'react-hook-form'
 import { LoaderCircle }from "lucide-react"
 import apiDB from '@/api/apiDB'
+import { TipoArchivo } from '@/interfaces/tareasInterfaces'
 
 interface DialogoAprobarProps {
     color: string;
     idTarea: number;
+    tipo: string;
+    nombreArchivo: string;
 
     }
 export const DialogoAprobar = (props:DialogoAprobarProps) => {
@@ -51,7 +54,12 @@ export const DialogoAprobar = (props:DialogoAprobarProps) => {
       //formData.append('clave', data.contasena);
       const pathFirma = await apiDB.post('/Tarea/subirFirma', formData);
       console.log(pathFirma);
-      const archivoFirmado = await apiDB.post('/Tarea/firmarPDF', {rutaFirma: pathFirma.data, contrasenaFirma: data.contasena, idArchivo: props.idTarea});
+      if(props.tipo == TipoArchivo.ApplicationPDF){
+
+        const archivoFirmado = await apiDB.post('/Tarea/firmarPDF', {rutaFirma: pathFirma.data, contrasenaFirma: data.contasena, idArchivo: props.idTarea});
+      }else if(props.tipo == TipoArchivo.TextXML){
+        const archivoFirmado = await apiDB.post('/Tarea/firmarXML', {rutaFirma: pathFirma.data, contrasenaFirma: data.contasena, idArchivo: props.idTarea});
+      }
 
       setLoading(false);
       window.location.reload();

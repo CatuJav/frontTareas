@@ -158,7 +158,7 @@ export function CreateTaskForm() {
       <div className="text-left">
       <Label htmlFor="archivo"  className="text-lg">Archivo</Label>
       
-      <Input type="file" accept=".pdf" {...register("archivo",{required:true})} />
+      <Input type="file" accept=".pdf, .xml" {...register("archivo",{required:true})} />
       {errors.archivo && <p style={{ color: "red" }}>{errors.archivo.message}</p>}
     
       </div>

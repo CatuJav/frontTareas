@@ -51,6 +51,11 @@ export enum NombreEstado {
     Nuevo = "NUEVO",
 }
 
+export enum TipoArchivo {
+    ApplicationPDF = "application/pdf",
+    TextXML = "text/xml",
+}
+
 export interface UsuariosAsignado {
     id:             number;
     usuarioAD:      UsuarioAD;
