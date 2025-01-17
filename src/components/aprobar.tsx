@@ -15,7 +15,7 @@ import {
 import { useForm,SubmitHandler, set  } from 'react-hook-form'
 import { LoaderCircle }from "lucide-react"
 import apiDB from '@/api/apiDB'
-import { TipoArchivo } from '@/interfaces/tareasInterfaces'
+import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TipoArchivo } from '@/interfaces/tareasInterfaces'
 
 interface DialogoAprobarProps {
     color: string;
@@ -47,6 +47,16 @@ export const DialogoAprobar = (props:DialogoAprobarProps) => {
         formState: { errors },
       } = useForm<Inputs>();
       
+      const finalizarTarea = async (idTarea: number) => {
+        const tarea = await apiDB.get<TareaMS>(`/Tarea/${idTarea}`)
+        const estado = await apiDB.get<EstadoTareaMS[]>(`/EstadoTarea`)
+        if (tarea) {
+          const nuevaTarea:TareaME = { ...tarea.data, idEstado: estado.data.find((e) => e.estado === NombreEstado.Fin)!.id, idUsuarios: [], propgreso: 100 }
+          const response = await apiDB.put(`/Tarea`, nuevaTarea)
+         
+      }}
+
+      
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
       setLoading(true);
       const formData = new FormData();
@@ -60,6 +70,10 @@ export const DialogoAprobar = (props:DialogoAprobarProps) => {
       }else if(props.tipo == TipoArchivo.TextXML){
         const archivoFirmado = await apiDB.post('/Tarea/firmarXML', {rutaFirma: pathFirma.data, contrasenaFirma: data.contasena, idArchivo: props.idTarea});
       }
+
+      await finalizarTarea(props.idTarea);
+
+
 
       setLoading(false);
       window.location.reload();
