@@ -51,6 +51,11 @@ export enum NombreEstado {
     Nuevo = "NUEVO",
 }
 
+export enum NombreRol {
+    Administrador = "Administradores",
+    Usuario = "Usuarios",
+}
+
 export enum TipoArchivo {
     ApplicationPDF = "application/pdf",
     TextXML = "text/xml",

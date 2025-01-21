@@ -10,16 +10,17 @@ import {
   import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
 import apiDB from "@/api/apiDB"
-import { EstadoTareaMS, NombreEstado, TareaME, TareaMS, TareaResumenMS } from "@/interfaces/tareasInterfaces"
+import { EstadoTareaMS, NombreEstado, NombreRol, TareaME, TareaMS, TareaResumenMS } from "@/interfaces/tareasInterfaces"
 import { DialogoEditar } from "./editar"
 import Layout from "./layout-sidebar"
 import { DialogoAprobar } from "./aprobar"
+import { useAuth } from "@/hooks/useAuth"
   
 
 
    
   export function TaskList() {
-
+    const { user } = useAuth();
     const [Tareas, setTareas] = useState<TareaResumenMS[]>([]);
 
     useEffect(() => {
@@ -162,8 +163,9 @@ import { DialogoAprobar } from "./aprobar"
                     tarea={task}
                    
                     
-                  />{
-                    (task.nombreArchivo != null && !task.nombreArchivo.startsWith("signed_")) &&(
+                  />
+                  {
+                    (task.nombreArchivo != null && !task.nombreArchivo.startsWith("signed_") && user?.miembrosDe.filter(x=> x == NombreRol.Administrador)[0]==NombreRol.Administrador) &&(
                       <DialogoAprobar color="bg-sky-700"
                       idTarea={task.idTarea} tipo={task.tipo} nombreArchivo={task.nombreArchivo}/>
                     )
