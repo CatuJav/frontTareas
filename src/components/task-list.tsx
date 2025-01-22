@@ -29,7 +29,12 @@ import { useAuth } from "@/hooks/useAuth"
 
     const loadEstado = async () => {
       const estados = await apiDB.get<TareaResumenMS[]>("/Tarea")
-      setTareas(estados.data)
+      if(user?.miembrosDe.find(x => x == NombreRol.Administrador)){
+        setTareas(estados.data)
+      }else{
+        setTareas(estados.data.filter(x => x.usuariosAsignados?.find(y => y.usuarioAD == user?.principal.samAccountName)))
+      }
+
       console.log(estados.data);
       }
     

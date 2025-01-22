@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { DatoSelect } from "./dato-select"
 import MultipleSelector from "./ui/multiple-selector"
 import apiDB from "@/api/apiDB"
-import { EstadoMS, UsuarioMS } from "@/interfaces/tareasInterfaces"
+import { EstadoMS, NombreRol, UsuarioMS } from "@/interfaces/tareasInterfaces"
 import { Spinner } from "./ui/spinner"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import Layout from "./layout-sidebar"
@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth"
 
 
 export function CreateTaskForm() {
+  const {user} = useAuth();
   const [titulo, setTitulo] = useState("")
   const [descripccion, setDescripccion] = useState("")
   const [assignedTo, setAssignedTo] = useState("")
@@ -52,16 +53,30 @@ export function CreateTaskForm() {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const formData = new FormData();
 
-    //crear tarea
-    const tarea = {
-      titulo: data.titulo,
-      descripcion: data.descripcion,
-      idEstado: parseInt(data.estado),
-      idUsuarios: data.asignadoA.map((e) => parseInt(e.value)),
-      fecha: new Date().toISOString(),
-      //set tiemzone Guayaquil to ISOString
+    let tarea;
+    if (user?.miembrosDe.find(x => x == NombreRol.Usuario)) {
+       tarea = {
+        titulo: data.titulo,
+        descripcion: data.descripcion,
+        idEstado: parseInt(data.estado),
+        idUsuarios: [listaUsuarios.find(x => x.usuarioAD == user?.principal.samAccountName)?.id],
+        fecha: new Date().toISOString(),
+        //set tiemzone Guayaquil to ISOString
 
-      hora : new Date().toLocaleString('sv', {timeZone: 'America/Guayaquil'}).replace(' ','T'),
+        hora: new Date().toLocaleString('sv', { timeZone: 'America/Guayaquil' }).replace(' ', 'T'),
+      }
+    } else {
+      //crear tarea
+       tarea = {
+        titulo: data.titulo,
+        descripcion: data.descripcion,
+        idEstado: parseInt(data.estado),
+        idUsuarios: data.asignadoA.map((e) => parseInt(e.value)),
+        fecha: new Date().toISOString(),
+        //set tiemzone Guayaquil to ISOString
+
+        hora: new Date().toLocaleString('sv', { timeZone: 'America/Guayaquil' }).replace(' ', 'T'),
+      }
     }
 
 
@@ -181,7 +196,9 @@ export function CreateTaskForm() {
       <div className="text-left" >
         <Label htmlFor="assignedTo"  className="text-lg">Asignar a</Label> 
      
-     { us.length > 0 ?
+     { 
+     user?.miembrosDe.find(x=>x == NombreRol.Administrador) &&
+     (us.length > 0   ?
             <Controller
             name="asignadoA"
             control={control}
@@ -200,7 +217,7 @@ export function CreateTaskForm() {
       
             )}
           />
-      : <Spinner size={"small"} />}
+      : <Spinner size={"small"} />)}
     
 
     </div>
