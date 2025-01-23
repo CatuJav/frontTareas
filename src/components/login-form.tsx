@@ -10,11 +10,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, SubmitHandler, set } from "react-hook-form"
 import { useAuth } from "@/hooks/useAuth"
 import apiDB from "@/api/apiDB"
 import { RespAD } from "@/interfaces/adinterface"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, LoaderCircle } from "lucide-react"
  
 import {
   Alert,
@@ -29,6 +29,8 @@ export function LoginForm({
 
 
     const { login } = useAuth();
+
+    const [isLoading, setLoading]= useState(false);
 
 
 
@@ -49,7 +51,7 @@ export function LoginForm({
         
        try{
         
-       
+        setLoading(true);
         const loginData = await apiDB.post<RespAD>("/Login", data)
  
         if (loginData.data.principal.status === 200) {
@@ -67,6 +69,7 @@ export function LoginForm({
         }else{
           alert("Error en el servidor");
         }
+        setLoading(false);
       }catch(e){
         console.log(e);
       }
@@ -106,7 +109,10 @@ export function LoginForm({
                 {errors.contrasena && <p style={{ color: "red" }}>{errors.contrasena.message}</p>}
               </div>
               <Button type="submit"  className="w-full">
-                Login
+                {
+                  !isLoading ?
+                "Login": (<LoaderCircle className="h-6 w-6 animate-spin" /> )
+                }
               </Button>
               
             </div>

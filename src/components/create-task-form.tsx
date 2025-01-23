@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { DatoSelect } from "./dato-select"
 import MultipleSelector from "./ui/multiple-selector"
 import apiDB from "@/api/apiDB"
-import { EstadoMS, NombreRol, UsuarioMS } from "@/interfaces/tareasInterfaces"
+import { EstadoMS, NombreEstado, NombreRol, UsuarioMS } from "@/interfaces/tareasInterfaces"
 import { Spinner } from "./ui/spinner"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import Layout from "./layout-sidebar"
@@ -44,7 +44,6 @@ export function CreateTaskForm() {
   const {
     register,
     handleSubmit,
-    watch,
     control,
     reset,
     formState: { errors },
@@ -52,7 +51,7 @@ export function CreateTaskForm() {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const formData = new FormData();
-
+    
     let tarea;
     if (user?.miembrosDe.find(x => x == NombreRol.Usuario)) {
        tarea = {
@@ -136,7 +135,11 @@ export function CreateTaskForm() {
     const respEstadoMS = await apiDB.get<EstadoMS[]>("/EstadoTarea");
     const respUsuarioMS = await apiDB.get<UsuarioMS[]>("/Usuario");
   
-    setListaEstados([...respEstadoMS.data]);
+    if(user?.miembrosDe.find(x => x == NombreRol.Administrador)){
+      setListaEstados([...respEstadoMS.data]);
+    }else{
+      setListaEstados(respEstadoMS.data.filter(x => x.estado==NombreEstado.Nuevo));
+    }
     setListaUsuarios([...respUsuarioMS.data]);
   };
 
@@ -155,7 +158,7 @@ export function CreateTaskForm() {
         <Input
           id="description"
           placeholder="Ingrese título de la tarea"
-          {...register("titulo", { required: true })}
+          {...register("titulo", { required: "Título es requerido." })}
         />
         {errors.titulo && <p style={{ color: "red" }}>{errors.titulo.message}</p>}
       </div>
@@ -163,7 +166,7 @@ export function CreateTaskForm() {
         <Label htmlFor="description"  className="text-lg">Descripción de la tarea</Label>
         <Textarea
           id="description"
-          {...register("descripcion", { required: true })}
+          {...register("descripcion", { required: "La descripción es requerido." })}
           
           placeholder="Ingrese la descripción de la tarea"
           
@@ -173,7 +176,7 @@ export function CreateTaskForm() {
       <div className="text-left">
       <Label htmlFor="archivo"  className="text-lg">Archivo</Label>
       
-      <Input type="file" accept=".pdf, .xml" {...register("archivo",{required:true})} />
+      <Input type="file" accept=".pdf, .xml" {...register("archivo",{required:"Seleccione un archivo xml o pdf"})} />
       {errors.archivo && <p style={{ color: "red" }}>{errors.archivo.message}</p>}
     
       </div>
@@ -181,6 +184,9 @@ export function CreateTaskForm() {
         <Label htmlFor="assignedTo"  className="text-lg">Estado</Label>
         <Controller
         name="estado"
+        rules={{
+          required:"Seleccione un estado"
+        }}
         control={control}
         defaultValue=""
         render={({ field }) => (
@@ -191,6 +197,7 @@ export function CreateTaskForm() {
           />
         )}
       />
+      {errors.estado && <p style={{ color: "red" }}>{errors.estado.message}</p>}
       </div>
 
       <div className="text-left" >
@@ -199,9 +206,13 @@ export function CreateTaskForm() {
      { 
      user?.miembrosDe.find(x=>x == NombreRol.Administrador) &&
      (us.length > 0   ?
+      <div className="text-left">
             <Controller
             name="asignadoA"
             control={control}
+            rules={{
+              required:"Asigne por lo menos a un usuario"
+            }}
             defaultValue={[]}
             render={({ field }) => (
               <MultipleSelector
@@ -217,6 +228,8 @@ export function CreateTaskForm() {
       
             )}
           />
+          {errors.asignadoA && <p style={{ color: "red" }}>{errors.asignadoA.message}</p>}
+          </div>
       : <Spinner size={"small"} />)}
     
 
